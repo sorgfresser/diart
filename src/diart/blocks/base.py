@@ -58,9 +58,6 @@ class PipelineConfig:
         left = utils.get_padding_left(file_duration + right, self.duration)
         return left, right
 
-    def optimal_block_size(self) -> int:
-        return int(np.rint(self.step * self.sample_rate))
-
 
 class Pipeline:
     @staticmethod
