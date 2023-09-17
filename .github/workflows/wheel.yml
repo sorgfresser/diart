@@ -1,0 +1,37 @@
+name: build package
+on:
+  pull_request:
+  push:
+    tags:
+      - "*"
+    branches:
+      - main
+      - develop
+
+jobs:
+  build_wheel:
+    name: Build wheels on ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out diart
+        uses: actions/checkout@v3
+
+      - name: setup python env
+        uses: actions/setup-python@v4
+
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.12.1
+        env:
+          CIBW_BUILD: "{cp310-*,cp311-*,cp39-*,cp38-*}"
+          CIBW_ARCHS_LINUX: "x86_64 aarch64"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: diart_wheel
+          path: ./wheelhouse/*.whl
